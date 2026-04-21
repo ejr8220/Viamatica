@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Viamatica.Application.Configuration;
+using Viamatica.Infrastructure.Security;
 
 namespace Viamatica.Infrastructure.Data;
 
@@ -26,6 +29,9 @@ public class ViamaticaDbContextFactory : IDesignTimeDbContextFactory<ViamaticaDb
         optionsBuilder.UseSqlServer(connectionString, 
             b => b.MigrationsAssembly(typeof(ViamaticaDbContext).Assembly.FullName));
 
-        return new ViamaticaDbContext(optionsBuilder.Options);
+        var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>() ?? new JwtSettings();
+        var databaseFieldProtector = new DatabaseFieldProtector(Options.Create(jwtSettings));
+
+        return new ViamaticaDbContext(optionsBuilder.Options, databaseFieldProtector);
     }
 }

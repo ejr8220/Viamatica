@@ -28,9 +28,10 @@ public sealed class TurnService : ITurnService
     public async Task<TurnResponseDto> CreateAsync(CreateTurnRequestDto request, int gestorUserId, string actorRole, CancellationToken cancellationToken = default)
     {
         ValidateStaffRole(actorRole);
-        await EnsureCashAndGestorAsync(request.CashId, gestorUserId, cancellationToken);
+        await EnsureCashAndGestorAsync(request.CashId, gestorUserId, request.AttentionTypeId, cancellationToken);
 
-        var turn = new Turn(request.Description.Trim(), request.Date, request.CashId, gestorUserId);
+        var description = await GenerateDescriptionAsync(request.AttentionTypeId, null, cancellationToken);
+        var turn = new Turn(description, request.AttentionTypeId.Trim(), request.Date, request.CashId, gestorUserId);
         _turnRepository.Add(turn);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return await GetByIdAsync(turn.TurnId, cancellationToken);
@@ -43,8 +44,11 @@ public sealed class TurnService : ITurnService
         var turn = await _turnRepository.GetForUpdateAsync(turnId, cancellationToken)
             ?? throw new NotFoundException($"No se encontró el turno {turnId}.");
 
-        await EnsureCashAndGestorAsync(request.CashId, gestorUserId, cancellationToken);
-        turn.Update(request.Description.Trim(), request.Date, request.CashId, gestorUserId);
+        await EnsureCashAndGestorAsync(request.CashId, gestorUserId, request.AttentionTypeId, cancellationToken);
+        var description = request.AttentionTypeId == turn.AttentionTypeId
+            ? turn.Description
+            : await GenerateDescriptionAsync(request.AttentionTypeId, turnId, cancellationToken);
+        turn.Update(description, request.AttentionTypeId.Trim(), request.Date, request.CashId, gestorUserId);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return await GetByIdAsync(turn.TurnId, cancellationToken);
@@ -59,7 +63,7 @@ public sealed class TurnService : ITurnService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task EnsureCashAndGestorAsync(int cashId, int gestorUserId, CancellationToken cancellationToken)
+    private async Task EnsureCashAndGestorAsync(int cashId, int gestorUserId, string attentionTypeId, CancellationToken cancellationToken)
     {
         var cashExists = await _turnRepository.CashIsActiveAsync(cashId, cancellationToken);
         if (!cashExists)
@@ -73,6 +77,12 @@ public sealed class TurnService : ITurnService
         {
             throw new ForbiddenOperationException("Solo un administrador o gestor activo puede administrar turnos.");
         }
+
+        var attentionTypeExists = await _turnRepository.AttentionTypeExistsAsync(attentionTypeId.Trim(), cancellationToken);
+        if (!attentionTypeExists)
+        {
+            throw new NotFoundException($"No existe el tipo de atención {attentionTypeId}.");
+        }
     }
 
     private static void ValidateStaffRole(string actorRole)
@@ -81,5 +91,12 @@ public sealed class TurnService : ITurnService
         {
             throw new ForbiddenOperationException("No tiene permisos para administrar turnos.");
         }
+    }
+
+    private async Task<string> GenerateDescriptionAsync(string attentionTypeId, int? excludedTurnId, CancellationToken cancellationToken)
+    {
+        var prefix = TurnPrefixes.FromAttentionType(attentionTypeId.Trim());
+        var sequence = await _turnRepository.GetNextSequenceForPrefixAsync(prefix, excludedTurnId, cancellationToken);
+        return $"{prefix}{sequence:0000}";
     }
 }

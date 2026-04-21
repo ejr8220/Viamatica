@@ -1,0 +1,63 @@
+<section class="feature-page">
+  <app-page-header title="Cajas" subtitle="Gestiona cajas, asignaciones y sesiones activas." icon="pi pi-shop">
+    <button *ngIf="canManageCashes" pButton type="button" label="Nueva caja" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+  </app-page-header>
+
+  <app-stats-section title="Resumen de cajas">
+    <div class="stats-grid">
+      <app-stat-card title="Total cajas" [value]="cashes.length" icon="pi pi-shop"></app-stat-card>
+      <app-stat-card title="Activas" [value]="activeCount" icon="pi pi-check-circle" color="success"></app-stat-card>
+      <app-stat-card title="Con sesión" [value]="sessionCount" icon="pi pi-lock-open" color="warning"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <app-grid-shared [columns]="columns" [data]="filteredCashes" [loading]="loading" [actions]="actions">
+    <span caption-start class="muted-text">Cajas configuradas: {{ filteredCashes.length }}</span>
+    <div caption-end class="table-search">
+      <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar caja" />
+    </div>
+  </app-grid-shared>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '32rem' }" [header]="editingCash ? 'Editar caja' : 'Nueva caja'">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+      <div class="form-field">
+        <label class="form-label">Descripción</label>
+        <input pInputText formControlName="description" />
+      </div>
+      <label class="page-actions">
+        <input type="checkbox" formControlName="active" />
+        <span>Activa</span>
+      </label>
+      <div class="dialog-actions">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-save" [loading]="saving"></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog [(visible)]="assignmentDialogVisible" [modal]="true" [style]="{ width: '38rem' }" header="Asignar cajeros">
+    <div class="form-grid" *ngIf="assignmentCash">
+      <div class="form-field">
+        <label class="form-label">Caja</label>
+        <strong>{{ assignmentCash.name }}</strong>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Cajero</label>
+        <select [(ngModel)]="selectedCashierId">
+          <option [ngValue]="null">Seleccione un cajero</option>
+          <option *ngFor="let cashier of cashierOptions" [ngValue]="cashier.userId">{{ cashier.userName }}</option>
+        </select>
+      </div>
+      <button pButton type="button" label="Asignar" icon="pi pi-user-plus" (click)="assignCashier()"></button>
+      <div class="assigned-cashiers" *ngIf="assignmentCash.assignedCashiers.length; else emptyAssignments">
+        <div class="assigned-cashier-item" *ngFor="let cashier of assignmentCash.assignedCashiers">
+          <span class="assigned-cashier-name">{{ cashier.userName }}</span>
+          <button pButton type="button" icon="pi pi-times" severity="danger" text="true" (click)="removeCashier(cashier.userId)"></button>
+        </div>
+      </div>
+      <ng-template #emptyAssignments>
+        <div class="empty-state">No hay cajeros asignados.</div>
+      </ng-template>
+    </div>
+  </p-dialog>
+</section>

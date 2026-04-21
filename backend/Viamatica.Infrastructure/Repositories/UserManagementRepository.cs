@@ -5,16 +5,19 @@ using Viamatica.Application.DTOs.Users;
 using Viamatica.Application.Interfaces;
 using Viamatica.Domain.Entities;
 using Viamatica.Infrastructure.Data;
+using Viamatica.Infrastructure.Security;
 
 namespace Viamatica.Infrastructure.Repositories;
 
 public sealed class UserManagementRepository : IUserManagementRepository
 {
     private readonly ViamaticaDbContext _dbContext;
+    private readonly DatabaseFieldProtector _databaseFieldProtector;
 
-    public UserManagementRepository(ViamaticaDbContext dbContext)
+    public UserManagementRepository(ViamaticaDbContext dbContext, DatabaseFieldProtector databaseFieldProtector)
     {
         _dbContext = dbContext;
+        _databaseFieldProtector = databaseFieldProtector;
     }
 
     public async Task<IReadOnlyCollection<UserResponseDto>> GetAllAsync(bool pendingOnly, CancellationToken cancellationToken = default)
@@ -55,7 +58,12 @@ public sealed class UserManagementRepository : IUserManagementRepository
 
     public Task<bool> EmailExistsAsync(string email, int? currentUserId, CancellationToken cancellationToken = default)
         => _dbContext.Users.AnyAsync(
-            user => user.Email == email && (!currentUserId.HasValue || user.UserId != currentUserId.Value),
+            user => user.EmailHash == _databaseFieldProtector.ComputeHash(email) && (!currentUserId.HasValue || user.UserId != currentUserId.Value),
+            cancellationToken);
+
+    public Task<bool> IdentificationExistsAsync(string identification, int? currentUserId, CancellationToken cancellationToken = default)
+        => _dbContext.Users.AnyAsync(
+            user => user.IdentificationHash == _databaseFieldProtector.ComputeHash(identification) && (!currentUserId.HasValue || user.UserId != currentUserId.Value),
             cancellationToken);
 
     public Task<bool> RoleExistsAsync(int roleId, CancellationToken cancellationToken = default)
@@ -76,6 +84,7 @@ public sealed class UserManagementRepository : IUserManagementRepository
     {
         UserId = user.UserId,
         UserName = user.UserName,
+        Identification = user.Identification,
         Email = user.Email,
         RoleId = user.RoleId,
         RoleName = user.Role.RoleName,

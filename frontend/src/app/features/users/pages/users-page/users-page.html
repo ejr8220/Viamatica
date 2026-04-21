@@ -1,0 +1,93 @@
+<section class="feature-page">
+  <app-page-header [title]="pageTitle" [subtitle]="pageSubtitle" icon="pi pi-users">
+    <div class="page-actions" *ngIf="!activeView">
+      <label class="file-trigger p-button p-component p-button-outlined">
+        <i class="pi pi-upload"></i>
+        <span>Carga masiva</span>
+        <input type="file" accept=".xlsx,.xls,.csv" (change)="onFileSelected($event)" />
+      </label>
+      <button pButton type="button" label="Nuevo usuario" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+    </div>
+  </app-page-header>
+
+  <app-stats-section title="Resumen de usuarios">
+    <div class="stats-grid">
+      <app-stat-card title="Total usuarios" [value]="users.length" icon="pi pi-users"></app-stat-card>
+      <app-stat-card title="Pendientes" [value]="pendingApprovals" icon="pi pi-clock" color="warning"></app-stat-card>
+      <app-stat-card title="Reporte activo" [value]="activeReport.length" icon="pi pi-chart-line" color="success"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <app-grid-shared [columns]="displayedColumns" [data]="displayedData" [loading]="loading" [actions]="activeView ? [] : actions">
+    <span caption-start class="muted-text">{{ activeView ? 'Usuarios activos reportados' : 'Usuarios listados' }}: {{ displayedData.length }}</span>
+    <div caption-end class="table-search">
+      <input pInputText [(ngModel)]="searchTerm" [placeholder]="activeView ? 'Buscar usuario activo' : 'Buscar usuario'" />
+    </div>
+  </app-grid-shared>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '42rem' }" [header]="editingUser ? 'Editar usuario' : 'Nuevo usuario'">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid two-columns">
+      <div class="form-field">
+        <label class="form-label">Usuario</label>
+        <input pInputText formControlName="userName" minlength="8" />
+        <span class="form-error" *ngIf="form.controls.userName.invalid && form.controls.userName.touched">
+          El usuario debe tener al menos 8 caracteres.
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Correo</label>
+        <input pInputText type="email" formControlName="email" />
+        <span class="form-error" *ngIf="form.controls.email.invalid && form.controls.email.touched">Correo válido requerido.</span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Identificación</label>
+        <input pInputText formControlName="identification" />
+        <span class="form-error" *ngIf="form.controls.identification.invalid && form.controls.identification.touched">
+          Debe tener entre 10 y 13 dígitos.
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Contraseña</label>
+        <input pInputText type="password" formControlName="password" minlength="8" />
+        <span class="form-error" *ngIf="form.controls.password.invalid && form.controls.password.touched">
+          La contraseña debe tener al menos 8 caracteres.
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Rol</label>
+        <select formControlName="role">
+          <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Estado</label>
+        <select formControlName="status">
+          <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+
+      <div class="dialog-actions full-width">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-save" [loading]="saving"></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog [(visible)]="importDialogVisible" [modal]="true" [style]="{ width: '40rem' }" header="Carga masiva de usuarios">
+    <div class="form-grid">
+      <p class="muted-text">Encabezados esperados: userName, identification, email, password, role.</p>
+      <p-progressBar [value]="bulkProgress"></p-progressBar>
+      <div class="upload-results">
+        <div *ngFor="let result of bulkResults" class="upload-item" [class.success]="result.status === 'success'" [class.error]="result.status === 'error'">
+          Fila {{ result.rowNumber }}: {{ result.message }}
+        </div>
+      </div>
+      <span class="muted-text" *ngIf="importing">Procesando archivo...</span>
+    </div>
+  </p-dialog>
+</section>

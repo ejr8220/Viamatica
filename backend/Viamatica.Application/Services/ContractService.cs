@@ -60,9 +60,9 @@ public sealed class ContractService : IContractService
         var contract = await _contractRepository.GetForUpdateAsync(contractId, cancellationToken)
             ?? throw new NotFoundException($"No se encontró el contrato {contractId}.");
 
-        if (contract.StatusId != ContractStatusIds.Active)
+        if (!contract.IsOperative())
         {
-            throw new BusinessRuleException("Solo se pueden registrar pagos sobre contratos activos.");
+            throw new BusinessRuleException("Solo se pueden registrar pagos sobre contratos operativos.");
         }
 
         var payment = new Payment(request.PaymentDate, contract.ClientId, contract.ContractId, request.Amount, request.Description);
@@ -78,9 +78,9 @@ public sealed class ContractService : IContractService
         var currentContract = await _contractRepository.GetForUpdateAsync(contractId, cancellationToken)
             ?? throw new NotFoundException($"No se encontró el contrato {contractId}.");
 
-        if (currentContract.StatusId != ContractStatusIds.Active)
+        if (!currentContract.IsOperative())
         {
-            throw new BusinessRuleException("Solo los contratos activos pueden cambiar de servicio.");
+            throw new BusinessRuleException("Solo los contratos operativos pueden cambiar de servicio.");
         }
 
         if (currentContract.ServiceId == request.NewServiceId)
@@ -100,7 +100,7 @@ public sealed class ContractService : IContractService
             DateTimeOffset.UtcNow,
             currentContract.EndDate,
             request.NewServiceId,
-            ContractStatusIds.Active,
+            ContractStatusIds.Renewed,
             currentContract.ClientId,
             currentContract.MethodPaymentId);
 
@@ -115,9 +115,9 @@ public sealed class ContractService : IContractService
         var contract = await _contractRepository.GetForUpdateAsync(contractId, cancellationToken)
             ?? throw new NotFoundException($"No se encontró el contrato {contractId}.");
 
-        if (contract.StatusId != ContractStatusIds.Active)
+        if (!contract.IsOperative())
         {
-            throw new BusinessRuleException("Solo los contratos activos pueden cambiar su forma de pago.");
+            throw new BusinessRuleException("Solo los contratos operativos pueden cambiar su forma de pago.");
         }
 
         var methodExists = await _contractRepository.MethodPaymentExistsAsync(request.MethodPaymentId, cancellationToken);
@@ -136,7 +136,7 @@ public sealed class ContractService : IContractService
         var contract = await _contractRepository.GetForUpdateAsync(contractId, cancellationToken)
             ?? throw new NotFoundException($"No se encontró el contrato {contractId}.");
 
-        contract.Cancel();
+        contract.Cancel(DateTimeOffset.UtcNow);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return await GetByIdAsync(contract.ContractId, cancellationToken);
     }

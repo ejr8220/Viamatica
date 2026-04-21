@@ -1,0 +1,30 @@
+<section class="feature-page">
+  <app-page-header
+    title="Dashboard administrativo"
+    subtitle="Resumen ejecutivo del estado operativo del sistema."
+    icon="pi pi-chart-bar"
+  ></app-page-header>
+
+  <app-stats-section title="Resumen del dashboard" *ngIf="!loading; else dashboardLoading">
+    <div class="stats-grid">
+      <app-stat-card
+        *ngFor="let stat of stats"
+        [title]="stat.title"
+        [value]="stat.value"
+        [icon]="stat.icon"
+        [color]="stat.color"
+      ></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <div class="dashboard-notes" *ngIf="!loading">
+    <h2>Observaciones</h2>
+    <ul>
+      <li *ngFor="let stat of stats">{{ stat.title }}: {{ stat.description }}</li>
+    </ul>
+  </div>
+
+  <ng-template #dashboardLoading>
+    <div class="surface-card empty-state">Cargando indicadores...</div>
+  </ng-template>
+</section>

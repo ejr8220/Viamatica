@@ -1,0 +1,21 @@
+.footer {
+  padding: 1.5rem 2rem;
+  background: var(--surface-card);
+  border-top: 1px solid var(--surface-border);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

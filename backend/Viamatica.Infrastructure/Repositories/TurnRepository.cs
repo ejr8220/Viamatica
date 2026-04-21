@@ -22,6 +22,7 @@ public sealed class TurnRepository : ITurnRepository
             .AsNoTracking()
             .Include(turn => turn.Cash)
             .Include(turn => turn.UserGestor)
+            .Include(turn => turn.AttentionType)
             .OrderByDescending(turn => turn.Date)
             .Select(Map)
             .ToListAsync(cancellationToken);
@@ -31,6 +32,7 @@ public sealed class TurnRepository : ITurnRepository
             .AsNoTracking()
             .Include(entity => entity.Cash)
             .Include(entity => entity.UserGestor)
+            .Include(entity => entity.AttentionType)
             .Where(entity => entity.TurnId == turnId)
             .Select(Map)
             .FirstOrDefaultAsync(cancellationToken);
@@ -49,6 +51,38 @@ public sealed class TurnRepository : ITurnRepository
                     user.StatusId == UserStatusIds.Active,
             cancellationToken);
 
+    public Task<bool> AttentionTypeExistsAsync(string attentionTypeId, CancellationToken cancellationToken = default)
+        => _dbContext.AttentionTypes.AnyAsync(type => type.AttentionTypeId == attentionTypeId, cancellationToken);
+
+    public async Task<int> GetNextSequenceForPrefixAsync(string prefix, int? excludedTurnId = null, CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.Turns
+            .AsNoTracking()
+            .Where(turn => turn.Description.StartsWith(prefix))
+            .Select(turn => new
+            {
+                turn.TurnId,
+                turn.Description
+            });
+
+        if (excludedTurnId.HasValue)
+        {
+            query = query.Where(turn => turn.TurnId != excludedTurnId.Value);
+        }
+
+        var descriptions = await query
+            .Select(turn => turn.Description)
+            .ToListAsync(cancellationToken);
+
+        var maxValue = descriptions
+            .Where(description => description.Length >= 6)
+            .Select(description => int.TryParse(description.Substring(2, 4), out var value) ? value : 0)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        return maxValue + 1;
+    }
+
     public void Add(Turn turn) => _dbContext.Turns.Add(turn);
 
     public void Remove(Turn turn) => _dbContext.Turns.Remove(turn);
@@ -57,6 +91,8 @@ public sealed class TurnRepository : ITurnRepository
     {
         TurnId = turn.TurnId,
         Description = turn.Description,
+        AttentionTypeId = turn.AttentionTypeId,
+        AttentionTypeDescription = turn.AttentionType.Description,
         Date = turn.Date,
         CashId = turn.CashId,
         CashDescription = turn.Cash.CashDescription,

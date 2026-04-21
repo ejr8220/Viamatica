@@ -1,0 +1,20 @@
+<div class="topbar">
+  <div class="topbar-left">
+    <button pButton type="button" icon="pi pi-bars" class="p-button-text p-button-plain" (click)="onMenuToggle()"></button>
+    <div class="logo">
+      <i class="pi pi-building"></i>
+      <span class="logo-text">Viamatica</span>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <div class="user-info">
+      <i class="pi pi-user"></i>
+      <div class="user-details">
+        <span class="user-name">{{ userName }}</span>
+        <span class="user-role">{{ userRole }}</span>
+      </div>
+    </div>
+    <button pButton type="button" icon="pi pi-sign-out" label="Salir" class="p-button-outlined" (click)="logout()"></button>
+  </div>
+</div>

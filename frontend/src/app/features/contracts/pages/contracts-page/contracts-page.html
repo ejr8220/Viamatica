@@ -1,0 +1,77 @@
+<section class="feature-page">
+  <app-page-header title="Contratos" subtitle="Administra contratos y usa buscadores compartidos para cliente y servicio." icon="pi pi-file-edit">
+    <button pButton type="button" label="Nuevo contrato" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+  </app-page-header>
+
+  <app-stats-section title="Resumen de contratos">
+    <div class="stats-grid">
+      <app-stat-card title="Contratos" [value]="contracts.length" icon="pi pi-file"></app-stat-card>
+      <app-stat-card title="Pagos registrados" [value]="paymentCountTotal" icon="pi pi-wallet" color="success"></app-stat-card>
+      <app-stat-card title="Total pagado" [value]="totalPaidAmount" icon="pi pi-dollar" color="warning"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <app-grid-shared [columns]="columns" [data]="filteredContracts" [loading]="loading" [actions]="actions">
+    <span caption-start class="muted-text">Contratos listados: {{ filteredContracts.length }}</span>
+    <div caption-end class="table-search">
+      <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar contrato" />
+    </div>
+  </app-grid-shared>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '48rem' }" [header]="editingContract ? 'Editar contrato' : 'Nuevo contrato'">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid two-columns">
+      <div class="form-field full-width">
+        <app-input-search-shared
+          label="Cliente"
+          [required]="true"
+          [data]="clientOptions"
+          [columns]="[
+            { field: 'displayName', header: 'Cliente' },
+            { field: 'identification', header: 'Identificación' }
+          ]"
+          displayField="displayName"
+          [searchFields]="['displayName', 'identification']"
+          [value]="selectedClient"
+          [disabled]="!!editingContract"
+          (valueChange)="onClientSelected($event)"
+        ></app-input-search-shared>
+      </div>
+
+      <div class="form-field full-width">
+        <app-input-search-shared
+          label="Servicio"
+          [required]="true"
+          [data]="serviceOptions"
+          [columns]="[
+            { field: 'displayName', header: 'Servicio' }
+          ]"
+          displayField="displayName"
+          [searchFields]="['displayName']"
+          [value]="selectedService"
+          [disabled]="!!editingContract"
+          (valueChange)="onServiceSelected($event)"
+        ></app-input-search-shared>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Método de pago</label>
+        <select formControlName="methodPaymentId">
+          <option [ngValue]="0">Seleccione un método</option>
+          <option *ngFor="let method of paymentMethods" [ngValue]="method.methodPaymentId">{{ method.description }}</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Fecha inicio</label>
+        <input type="date" formControlName="startDate" />
+      </div>
+      <div class="form-field">
+        <label class="form-label">Fecha fin</label>
+        <input type="date" formControlName="endDate" />
+      </div>
+      <div class="dialog-actions full-width">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-save" [loading]="saving"></button>
+      </div>
+    </form>
+  </p-dialog>
+</section>

@@ -18,6 +18,7 @@
     { "key": "createdClientId", "value": "" },
     { "key": "cashId", "value": "1" },
     { "key": "turnId", "value": "" },
+    { "key": "attentionTypeId", "value": "GEN" },
     { "key": "serviceId", "value": "" },
     { "key": "contractId", "value": "" },
     { "key": "attentionId", "value": "" },
@@ -104,6 +105,18 @@
               "raw": "{\n  \"userNameOrEmail\": \"{{cashierUserNameOrEmail}}\",\n  \"password\": \"{{cashierPassword}}\"\n}"
             }
           }
+        },
+        {
+          "name": "Forgot Password Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userNameOrEmail\": \"{{adminUserNameOrEmail}}\",\n  \"identification\": \"0100000001\",\n  \"newPassword\": \"{{adminPassword}}\"\n}"
+            }
+          }
         }
       ]
     },
@@ -134,7 +147,7 @@
             "url": "{{baseUrl}}/api/users",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userName\": \"nuevo123\",\n  \"email\": \"nuevo123@viamatica.local\",\n  \"password\": \"NuevaClave1\",\n  \"roleId\": 3\n}"
+                "raw": "{\n  \"userName\": \"nuevo123\",\n  \"identification\": \"0102030407\",\n  \"email\": \"nuevo123@viamatica.local\",\n  \"password\": \"NuevaClave1\",\n  \"roleId\": 3\n}"
             }
           }
         },
@@ -248,7 +261,7 @@
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "url": "{{baseUrl}}/api/turns",
-            "body": { "mode": "raw", "raw": "{\n  \"description\": \"AT1001\",\n  \"date\": \"2026-01-01T10:00:00Z\",\n  \"cashId\": {{cashId}}\n}" }
+              "body": { "mode": "raw", "raw": "{\n  \"attentionTypeId\": \"{{attentionTypeId}}\",\n  \"date\": \"2026-01-01T10:00:00Z\",\n  \"cashId\": {{cashId}}\n}" }
           }
         },
         {

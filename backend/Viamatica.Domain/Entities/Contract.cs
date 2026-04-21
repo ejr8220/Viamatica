@@ -71,8 +71,22 @@ public class Contract : SoftDeletableEntity
         StatusId = "CAN";
     }
 
+    public void Cancel(DateTimeOffset cancellationDate)
+    {
+        StatusId = "CAN";
+        EndDate = cancellationDate;
+    }
+
     public void MarkAsReplaced()
     {
         StatusId = "REP";
     }
+
+    public void MarkAsRenewed()
+    {
+        StatusId = "REN";
+    }
+
+    public bool IsOperative()
+        => StatusId is "ACT" or "REN";
 }

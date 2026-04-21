@@ -10,6 +10,7 @@ public interface IUserManagementRepository
     Task<User?> GetForUpdateAsync(int userId, CancellationToken cancellationToken = default);
     Task<bool> UserNameExistsAsync(string userName, int? currentUserId, CancellationToken cancellationToken = default);
     Task<bool> EmailExistsAsync(string email, int? currentUserId, CancellationToken cancellationToken = default);
+    Task<bool> IdentificationExistsAsync(string identification, int? currentUserId, CancellationToken cancellationToken = default);
     Task<bool> RoleExistsAsync(int roleId, CancellationToken cancellationToken = default);
     Task<bool> IsActiveApprovedUserAsync(int userId, CancellationToken cancellationToken = default);
     void Add(User user);

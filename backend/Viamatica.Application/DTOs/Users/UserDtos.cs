@@ -14,6 +14,10 @@ public sealed class CreateUserRequestDto
     public string Email { get; set; } = string.Empty;
 
     [Required]
+    [RegularExpression(@"^\d{10,13}$")]
+    public string Identification { get; set; } = string.Empty;
+
+    [Required]
     [StringLength(30, MinimumLength = 8)]
     public string Password { get; set; } = string.Empty;
 
@@ -32,6 +36,10 @@ public sealed class UpdateUserRequestDto
     [StringLength(100)]
     public string Email { get; set; } = string.Empty;
 
+    [Required]
+    [RegularExpression(@"^\d{10,13}$")]
+    public string Identification { get; set; } = string.Empty;
+
     [StringLength(30, MinimumLength = 8)]
     public string? Password { get; set; }
 
@@ -45,6 +53,7 @@ public sealed class UserResponseDto
 {
     public int UserId { get; set; }
     public string UserName { get; set; } = string.Empty;
+    public string Identification { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public int RoleId { get; set; }
     public string RoleName { get; set; } = string.Empty;
@@ -58,6 +67,7 @@ public sealed class ActiveUserReportDto
 {
     public int UserId { get; set; }
     public string UserName { get; set; } = string.Empty;
+    public string Identification { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string RoleName { get; set; } = string.Empty;
     public string StatusDescription { get; set; } = string.Empty;

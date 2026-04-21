@@ -1,0 +1,106 @@
+:host {
+  display: block;
+}
+
+.card {
+  background: var(--surface-card);
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 1px 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+::ng-deep {
+  .p-datatable {
+    background: #ffffff;
+    color: var(--text-color);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .p-datatable .p-datatable-header,
+  .p-datatable .p-datatable-footer,
+  .p-datatable .p-paginator,
+  .p-datatable .p-paginator-bottom {
+    background: #ffffff;
+    color: var(--text-color);
+    border-color: var(--surface-border);
+  }
+
+  .p-datatable .p-datatable-header {
+    border-bottom: 1px solid var(--surface-border);
+  }
+
+  .p-datatable .p-datatable-table-container,
+  .p-datatable .p-datatable-wrapper {
+    background: #ffffff;
+  }
+
+  .p-column-filter {
+    width: 100%;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th {
+    background: var(--primary-color);
+    color: var(--primary-color-text);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .p-datatable .p-datatable-thead > tr:nth-child(2) > th {
+    background: #f8fbff;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--surface-border);
+  }
+
+  .p-datatable .p-datatable-tbody > tr {
+    background: #ffffff;
+    color: var(--text-color);
+  }
+
+  .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background: #f8fafc;
+  }
+
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background: #eef4ff;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    border-color: var(--surface-border);
+  }
+
+  .p-datatable .p-datatable-table-container::-webkit-scrollbar,
+  .p-datatable .p-datatable-wrapper::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  .p-datatable .p-datatable-table-container::-webkit-scrollbar-track,
+  .p-datatable .p-datatable-wrapper::-webkit-scrollbar-track {
+    background: #e2e8f0;
+  }
+
+  .p-datatable .p-datatable-table-container::-webkit-scrollbar-thumb,
+  .p-datatable .p-datatable-wrapper::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border: 3px solid #e2e8f0;
+    border-radius: 999px;
+  }
+
+  .p-datatable .p-sortable-column .p-sortable-column-icon,
+  .p-datatable .p-column-filter,
+  .p-paginator,
+  .p-paginator .p-paginator-current,
+  .p-paginator .p-paginator-pages .p-paginator-page,
+  .p-paginator .p-paginator-next,
+  .p-paginator .p-paginator-prev,
+  .p-paginator .p-paginator-first,
+  .p-paginator .p-paginator-last {
+    color: var(--text-color);
+  }
+
+  .p-paginator .p-paginator-page.p-highlight {
+    background: var(--primary-100);
+    color: var(--primary-color-dark);
+  }
+}

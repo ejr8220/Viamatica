@@ -20,6 +20,11 @@ public class TurnConfiguration : IEntityTypeConfiguration<Turn>
             .HasMaxLength(6)
             .IsRequired();
 
+        builder.Property(t => t.AttentionTypeId)
+            .HasColumnName("attentiontype_attentiontypeid")
+            .HasMaxLength(3)
+            .IsRequired();
+
         builder.Property(t => t.Date)
             .HasColumnName("date");
 
@@ -38,6 +43,11 @@ public class TurnConfiguration : IEntityTypeConfiguration<Turn>
         builder.HasOne(t => t.UserGestor)
             .WithMany(u => u.Turns)
             .HasForeignKey(t => t.UserGestorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(t => t.AttentionType)
+            .WithMany()
+            .HasForeignKey(t => t.AttentionTypeId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

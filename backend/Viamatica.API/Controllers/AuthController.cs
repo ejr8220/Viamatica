@@ -47,4 +47,24 @@ public sealed class AuthController : ApiControllerBase
             HttpContext.Connection.RemoteIpAddress?.ToString());
         return Ok(response);
     }
+
+    [AllowAnonymous]
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(typeof(ForgotPasswordResponseDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ForgotPasswordResponseDto>> ForgotPassword([FromBody] ForgotPasswordRequestDto request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var response = await _authService.ResetPasswordAsync(request, cancellationToken);
+
+        _logger.LogInformation(
+            "Password reset completed for {UserNameOrEmail} from {RemoteIp}",
+            request.UserNameOrEmail.Trim(),
+            HttpContext.Connection.RemoteIpAddress?.ToString());
+
+        return Ok(response);
+    }
 }

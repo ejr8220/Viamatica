@@ -1,0 +1,47 @@
+<section class="feature-page">
+  <app-page-header title="Turnos" subtitle="Registra turnos asociados a cajas operativas." icon="pi pi-ticket">
+    <button pButton type="button" label="Nuevo turno" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+  </app-page-header>
+
+  <app-stats-section title="Resumen de turnos">
+    <div class="stats-grid">
+      <app-stat-card title="Turnos" [value]="turns.length" icon="pi pi-ticket"></app-stat-card>
+      <app-stat-card title="Cajas usadas" [value]="cashOptions.length" icon="pi pi-shop" color="success"></app-stat-card>
+      <app-stat-card title="Filtrados" [value]="filteredTurns.length" icon="pi pi-filter" color="warning"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <app-grid-shared [columns]="columns" [data]="filteredTurns" [loading]="loading" [actions]="actions">
+    <span caption-start class="muted-text">Turnos encontrados: {{ filteredTurns.length }}</span>
+    <div caption-end class="table-search">
+      <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar turno" />
+    </div>
+  </app-grid-shared>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '34rem' }" [header]="editingTurn ? 'Editar turno' : 'Nuevo turno'">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+      <div class="form-field">
+        <label class="form-label">Tipo de atención</label>
+        <select formControlName="attentionTypeId">
+          <option value="">Seleccione un tipo</option>
+          <option *ngFor="let type of attentionTypeOptions" [value]="type.attentionTypeId">{{ type.description }}</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Fecha</label>
+        <input type="date" formControlName="date" />
+      </div>
+      <div class="form-field">
+        <label class="form-label">Caja</label>
+        <select formControlName="cashId">
+          <option [ngValue]="0">Seleccione una caja</option>
+          <option *ngFor="let cash of cashOptions" [ngValue]="cash.cashId">{{ cash.cashDescription }}</option>
+        </select>
+      </div>
+      <div class="dialog-actions">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-save" [loading]="saving"></button>
+      </div>
+    </form>
+  </p-dialog>
+</section>

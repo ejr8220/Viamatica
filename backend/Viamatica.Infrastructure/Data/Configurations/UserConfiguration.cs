@@ -20,14 +20,29 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(20)
             .IsRequired();
 
+        builder.Property(u => u.Identification)
+            .HasColumnName("identification")
+            .HasMaxLength(512)
+            .IsRequired();
+
         builder.Property(u => u.Email)
             .HasColumnName("email")
-            .HasMaxLength(100)
+            .HasMaxLength(512)
+            .IsRequired();
+
+        builder.Property(u => u.EmailHash)
+            .HasColumnName("emailhash")
+            .HasMaxLength(64)
+            .IsRequired();
+
+        builder.Property(u => u.IdentificationHash)
+            .HasColumnName("identificationhash")
+            .HasMaxLength(64)
             .IsRequired();
 
         builder.Property(u => u.Password)
             .HasColumnName("password")
-            .HasMaxLength(255)
+            .HasMaxLength(512)
             .IsRequired();
 
         builder.Property(u => u.RoleId)
@@ -68,7 +83,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsUnique()
             .HasFilter("[isdeleted] = 0");
 
-        builder.HasIndex(u => u.Email)
+        builder.HasIndex(u => u.EmailHash)
+            .IsUnique()
+            .HasFilter("[isdeleted] = 0");
+
+        builder.HasIndex(u => u.IdentificationHash)
             .IsUnique()
             .HasFilter("[isdeleted] = 0");
     }

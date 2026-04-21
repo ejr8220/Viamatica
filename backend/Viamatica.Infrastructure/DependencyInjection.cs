@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
         services.AddScoped<IUserManagementRepository, UserManagementRepository>();
         services.AddScoped<IActiveUserReportQuery, ActiveUserReportQuery>();
+        services.AddScoped<INavigationMenuQuery, NavigationMenuQuery>();
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<ICashManagementRepository, CashManagementRepository>();
         services.AddScoped<ITurnRepository, TurnRepository>();
@@ -34,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<AesClaimsProtector>();
+        services.AddSingleton<DatabaseFieldProtector>();
         services.AddTransient<IClaimsTransformation, EncryptedClaimsTransformation>();
         services.AddScoped<DatabaseSeeder>();
 

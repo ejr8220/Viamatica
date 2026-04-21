@@ -1,15 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Viamatica.Domain.Common;
 using Viamatica.Domain.Entities;
+using Viamatica.Infrastructure.Security;
 
 namespace Viamatica.Infrastructure.Data;
 
 public class ViamaticaDbContext : DbContext
 {
-    public ViamaticaDbContext(DbContextOptions<ViamaticaDbContext> options) 
+    private readonly DatabaseFieldProtector _databaseFieldProtector;
+
+    public ViamaticaDbContext(DbContextOptions<ViamaticaDbContext> options, DatabaseFieldProtector databaseFieldProtector) 
         : base(options)
     {
+        _databaseFieldProtector = databaseFieldProtector;
     }
 
     public DbSet<UserStatus> UserStatuses { get; set; }
@@ -29,6 +34,8 @@ public class ViamaticaDbContext : DbContext
     public DbSet<AttentionType> AttentionTypes { get; set; }
     public DbSet<AttentionStatus> AttentionStatuses { get; set; }
     public DbSet<Attention> Attentions { get; set; }
+    public DbSet<NavigationMenu> NavigationMenus { get; set; }
+    public DbSet<NavigationMenuRole> NavigationMenuRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +43,7 @@ public class ViamaticaDbContext : DbContext
 
         // Apply all configurations from the current assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ViamaticaDbContext).Assembly);
+        ConfigureUserFieldEncryption(modelBuilder);
         ApplySoftDeleteQueryFilters(modelBuilder);
     }
 
@@ -65,6 +73,8 @@ public class ViamaticaDbContext : DbContext
 
     private void ApplySoftDeleteRules()
     {
+        SyncProtectedUserFields();
+
         var softDeleteEntries = ChangeTracker.Entries<ISoftDeletable>()
             .Where(entry => entry.State == EntityState.Deleted);
 
@@ -73,6 +83,38 @@ public class ViamaticaDbContext : DbContext
             entry.State = EntityState.Modified;
             entry.Entity.SoftDelete();
         }
+    }
+
+    private void SyncProtectedUserFields()
+    {
+        var userEntries = ChangeTracker.Entries<User>()
+            .Where(entry => entry.State is EntityState.Added or EntityState.Modified);
+
+        foreach (var userEntry in userEntries)
+        {
+            userEntry.Entity.SyncProtectedHashes(
+                _databaseFieldProtector.ComputeHash(userEntry.Entity.Email),
+                _databaseFieldProtector.ComputeHash(userEntry.Entity.Identification));
+        }
+    }
+
+    private void ConfigureUserFieldEncryption(ModelBuilder modelBuilder)
+    {
+        var encryptedStringConverter = new ValueConverter<string, string>(
+            value => _databaseFieldProtector.Protect(value),
+            value => _databaseFieldProtector.Unprotect(value));
+
+        modelBuilder.Entity<User>()
+            .Property(user => user.Email)
+            .HasConversion(encryptedStringConverter);
+
+        modelBuilder.Entity<User>()
+            .Property(user => user.Identification)
+            .HasConversion(encryptedStringConverter);
+
+        modelBuilder.Entity<User>()
+            .Property(user => user.Password)
+            .HasConversion(encryptedStringConverter);
     }
 
     private static void ApplySoftDeleteQueryFilters(ModelBuilder modelBuilder)

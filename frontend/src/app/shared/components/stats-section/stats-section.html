@@ -1,0 +1,13 @@
+<div class="stats-section surface-card">
+  <button type="button" class="stats-section-toggle" (click)="toggle()">
+    <span class="stats-section-title">{{ title }}</span>
+    <span class="stats-section-action">
+      {{ collapsed ? 'Mostrar' : 'Ocultar' }}
+      <i class="pi" [ngClass]="collapsed ? 'pi-chevron-down' : 'pi-chevron-up'"></i>
+    </span>
+  </button>
+
+  <div class="stats-section-content" *ngIf="!collapsed">
+    <ng-content></ng-content>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<div [ngClass]="['stat-card', 'stat-card-' + color]">
+  <div class="stat-icon">
+    <i [class]="icon"></i>
+  </div>
+  <div class="stat-content">
+    <div class="stat-title">{{ title }}</div>
+    <div class="stat-value">{{ value }}</div>
+    <div *ngIf="trend !== undefined" class="stat-trend" [class.positive]="trend >= 0" [class.negative]="trend < 0">
+      <i [class]="trend >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"></i>
+      {{ trend >= 0 ? '+' : '' }}{{ trend }}%
+    </div>
+  </div>
+</div>

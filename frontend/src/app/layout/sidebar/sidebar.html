@@ -1,0 +1,45 @@
+<div class="sidebar" [class.hidden]="!visible">
+  <div class="sidebar-content">
+    <nav class="sidebar-nav" aria-label="Navegacion principal">
+      <ng-container *ngTemplateOutlet="menuNodes; context: { $implicit: menuItems, level: 0 }"></ng-container>
+    </nav>
+  </div>
+</div>
+
+<ng-template #menuNodes let-items let-level="level">
+  <ul class="menu-level" [class.child-level]="level > 0">
+    <li *ngFor="let item of items" class="menu-item">
+      <button
+        *ngIf="hasChildren(item); else leafItem"
+        type="button"
+        class="menu-button menu-group"
+        [class.expanded]="isExpanded(item)"
+        (click)="toggleGroup(item, $event)"
+      >
+        <span class="menu-button-content">
+          <i [class]="item.icon"></i>
+          <span class="menu-label">{{ item.label }}</span>
+        </span>
+        <i class="pi menu-chevron" [class.pi-chevron-down]="isExpanded(item)" [class.pi-chevron-right]="!isExpanded(item)"></i>
+      </button>
+
+      <ng-template #leafItem>
+        <button
+          type="button"
+          class="menu-button"
+          [class.active]="isActive(item.route)"
+          (click)="navigate(item.route, $event)"
+        >
+          <span class="menu-button-content">
+            <i [class]="item.icon"></i>
+            <span class="menu-label">{{ item.label }}</span>
+          </span>
+        </button>
+      </ng-template>
+
+      <ng-container *ngIf="hasChildren(item) && isExpanded(item)">
+        <ng-container *ngTemplateOutlet="menuNodes; context: { $implicit: item.children, level: level + 1 }"></ng-container>
+      </ng-container>
+    </li>
+  </ul>
+</ng-template>

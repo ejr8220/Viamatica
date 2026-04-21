@@ -13,11 +13,6 @@ namespace Viamatica.Infrastructure.Migrations
     [DbContext(typeof(ViamaticaDbContext))]
     partial class ViamaticaDbContextModelSnapshot : ModelSnapshot
     {
-        public static void BuildModelSnapshot(ModelBuilder modelBuilder)
-        {
-            new ViamaticaDbContextModelSnapshot().BuildModel(modelBuilder);
-        }
-
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -371,6 +366,77 @@ namespace Viamatica.Infrastructure.Migrations
                     b.ToTable("methodpayment", (string)null);
                 });
 
+            modelBuilder.Entity("Viamatica.Domain.Entities.NavigationMenu", b =>
+                {
+                    b.Property<int>("NavigationMenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("navigationmenuid");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NavigationMenuId"));
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int")
+                        .HasColumnName("displayorder");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("icon");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("isactive");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("label");
+
+                    b.Property<string>("MenuKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("menukey");
+
+                    b.Property<int?>("ParentNavigationMenuId")
+                        .HasColumnType("int")
+                        .HasColumnName("parentnavigationmenuid");
+
+                    b.Property<string>("Route")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("route");
+
+                    b.HasKey("NavigationMenuId");
+
+                    b.HasIndex("MenuKey")
+                        .IsUnique();
+
+                    b.HasIndex("ParentNavigationMenuId");
+
+                    b.ToTable("navigationmenu", (string)null);
+                });
+
+            modelBuilder.Entity("Viamatica.Domain.Entities.NavigationMenuRole", b =>
+                {
+                    b.Property<int>("NavigationMenuId")
+                        .HasColumnType("int")
+                        .HasColumnName("navigationmenuid");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int")
+                        .HasColumnName("rolid");
+
+                    b.HasKey("NavigationMenuId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("navigationmenurol", (string)null);
+                });
+
             modelBuilder.Entity("Viamatica.Domain.Entities.Payment", b =>
                 {
                     b.Property<int>("PaymentId")
@@ -488,6 +554,12 @@ namespace Viamatica.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TurnId"));
 
+                    b.Property<string>("AttentionTypeId")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)")
+                        .HasColumnName("attentiontype_attentiontypeid");
+
                     b.Property<int>("CashId")
                         .HasColumnType("int")
                         .HasColumnName("cash_cashid");
@@ -507,6 +579,8 @@ namespace Viamatica.Infrastructure.Migrations
                         .HasColumnName("usergestorid");
 
                     b.HasKey("TurnId");
+
+                    b.HasIndex("AttentionTypeId");
 
                     b.HasIndex("CashId");
 
@@ -534,9 +608,27 @@ namespace Viamatica.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
                         .HasColumnName("email");
+
+                    b.Property<string>("EmailHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("emailhash");
+
+                    b.Property<string>("Identification")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnName("identification");
+
+                    b.Property<string>("IdentificationHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("identificationhash");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -546,8 +638,8 @@ namespace Viamatica.Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
                         .HasColumnName("password");
 
                     b.Property<int>("RoleId")
@@ -572,7 +664,11 @@ namespace Viamatica.Infrastructure.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("EmailHash")
+                        .IsUnique()
+                        .HasFilter("[isdeleted] = 0");
+
+                    b.HasIndex("IdentificationHash")
                         .IsUnique()
                         .HasFilter("[isdeleted] = 0");
 
@@ -737,6 +833,35 @@ namespace Viamatica.Infrastructure.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("Viamatica.Domain.Entities.NavigationMenu", b =>
+                {
+                    b.HasOne("Viamatica.Domain.Entities.NavigationMenu", "ParentNavigationMenu")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentNavigationMenuId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ParentNavigationMenu");
+                });
+
+            modelBuilder.Entity("Viamatica.Domain.Entities.NavigationMenuRole", b =>
+                {
+                    b.HasOne("Viamatica.Domain.Entities.NavigationMenu", "NavigationMenu")
+                        .WithMany("NavigationMenuRoles")
+                        .HasForeignKey("NavigationMenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Viamatica.Domain.Entities.Role", "Role")
+                        .WithMany("NavigationMenuRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NavigationMenu");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("Viamatica.Domain.Entities.Payment", b =>
                 {
                     b.HasOne("Viamatica.Domain.Entities.Client", "Client")
@@ -758,6 +883,12 @@ namespace Viamatica.Infrastructure.Migrations
 
             modelBuilder.Entity("Viamatica.Domain.Entities.Turn", b =>
                 {
+                    b.HasOne("Viamatica.Domain.Entities.AttentionType", "AttentionType")
+                        .WithMany()
+                        .HasForeignKey("AttentionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Viamatica.Domain.Entities.Cash", "Cash")
                         .WithMany("Turns")
                         .HasForeignKey("CashId")
@@ -769,6 +900,8 @@ namespace Viamatica.Infrastructure.Migrations
                         .HasForeignKey("UserGestorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("AttentionType");
 
                     b.Navigation("Cash");
 
@@ -853,8 +986,17 @@ namespace Viamatica.Infrastructure.Migrations
                     b.Navigation("Contracts");
                 });
 
+            modelBuilder.Entity("Viamatica.Domain.Entities.NavigationMenu", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("NavigationMenuRoles");
+                });
+
             modelBuilder.Entity("Viamatica.Domain.Entities.Role", b =>
                 {
+                    b.Navigation("NavigationMenuRoles");
+
                     b.Navigation("Users");
                 });
 

@@ -1,0 +1,41 @@
+<section class="feature-page">
+  <app-page-header title="Servicios" subtitle="Catálogo de servicios disponibles para contratación." icon="pi pi-briefcase">
+    <button pButton type="button" label="Nuevo servicio" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+  </app-page-header>
+
+  <app-stats-section title="Resumen de servicios">
+    <div class="stats-grid">
+      <app-stat-card title="Servicios" [value]="services.length" icon="pi pi-briefcase"></app-stat-card>
+      <app-stat-card title="Precio promedio" [value]="averagePrice" icon="pi pi-dollar" color="success"></app-stat-card>
+      <app-stat-card title="Filtrados" [value]="filteredServices.length" icon="pi pi-filter" color="warning"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <app-grid-shared [columns]="columns" [data]="filteredServices" [loading]="loading" [actions]="actions">
+    <span caption-start class="muted-text">Servicios listados: {{ filteredServices.length }}</span>
+    <div caption-end class="table-search">
+      <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar servicio" />
+    </div>
+  </app-grid-shared>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '38rem' }" [header]="editingService ? 'Editar servicio' : 'Nuevo servicio'">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+      <div class="form-field">
+        <label class="form-label">Nombre</label>
+        <input pInputText formControlName="name" />
+      </div>
+      <div class="form-field">
+        <label class="form-label">Descripción</label>
+        <textarea formControlName="description" rows="4"></textarea>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Precio</label>
+        <input type="number" min="0.01" step="0.01" formControlName="price" />
+      </div>
+      <div class="dialog-actions">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-save" [loading]="saving"></button>
+      </div>
+    </form>
+  </p-dialog>
+</section>

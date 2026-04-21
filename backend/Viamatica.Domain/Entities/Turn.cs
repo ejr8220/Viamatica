@@ -6,6 +6,7 @@ public class Turn
 {
     public int TurnId { get; private set; }
     public string Description { get; private set; } = string.Empty;
+    public string AttentionTypeId { get; private set; } = string.Empty;
     public DateTimeOffset Date { get; private set; }
     public int CashId { get; private set; }
     public int UserGestorId { get; private set; }
@@ -13,25 +14,30 @@ public class Turn
     // Navigation
     public Cash Cash { get; private set; } = null!;
     public User UserGestor { get; private set; } = null!;
+    public AttentionType AttentionType { get; private set; } = null!;
     public ICollection<Attention> Attentions { get; private set; } = new List<Attention>();
 
     private Turn() { } // EF Constructor
 
-    public Turn(string description, DateTimeOffset date, int cashId, int userGestorId)
+    public Turn(string description, string attentionTypeId, DateTimeOffset date, int cashId, int userGestorId)
     {
         ValidateDescription(description);
+        ValidateAttentionTypeId(attentionTypeId);
 
         Description = description;
+        AttentionTypeId = attentionTypeId;
         Date = date;
         CashId = cashId;
         UserGestorId = userGestorId;
     }
 
-    public void Update(string description, DateTimeOffset date, int cashId, int userGestorId)
+    public void Update(string description, string attentionTypeId, DateTimeOffset date, int cashId, int userGestorId)
     {
         ValidateDescription(description);
+        ValidateAttentionTypeId(attentionTypeId);
 
         Description = description;
+        AttentionTypeId = attentionTypeId;
         Date = date;
         CashId = cashId;
         UserGestorId = userGestorId;
@@ -48,5 +54,14 @@ public class Turn
 
         if (!Regex.IsMatch(description, @"^[A-Z]{2}\d{4}$"))
             throw new ArgumentException("Turn description must be 2 uppercase letters followed by 4 numbers", nameof(description));
+    }
+
+    private static void ValidateAttentionTypeId(string attentionTypeId)
+    {
+        if (string.IsNullOrWhiteSpace(attentionTypeId))
+            throw new ArgumentException("Attention type is required", nameof(attentionTypeId));
+
+        if (!Regex.IsMatch(attentionTypeId, @"^[A-Z]{3}$"))
+            throw new ArgumentException("Attention type must be a 3 character code", nameof(attentionTypeId));
     }
 }

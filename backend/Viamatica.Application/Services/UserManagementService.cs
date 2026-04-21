@@ -45,12 +45,12 @@ public sealed class UserManagementService : IUserManagementService
             throw new ForbiddenOperationException("No se permite crear administradores desde la API.");
         }
 
-        await EnsureUniqueAsync(request.UserName, request.Email, null, cancellationToken);
+        await EnsureUniqueAsync(request.UserName, request.Email, request.Identification, null, cancellationToken);
         await EnsureRoleExistsAsync(request.RoleId, cancellationToken);
         await EnsureActiveApprovedUserAsync(creatorUserId, cancellationToken);
 
         var hashedPassword = _passwordHasher.Hash(request.Password);
-        var user = new User(request.UserName.Trim(), request.Email.Trim(), hashedPassword, request.RoleId, UserStatusIds.Pending);
+        var user = new User(request.UserName.Trim(), request.Identification.Trim(), request.Email.Trim(), hashedPassword, request.RoleId, UserStatusIds.Pending);
 
         if (creatorRole == RoleNames.Administrator)
         {
@@ -84,10 +84,10 @@ public sealed class UserManagementService : IUserManagementService
             throw new ForbiddenOperationException("No se permite asignar el rol administrador.");
         }
 
-        await EnsureUniqueAsync(request.UserName, request.Email, userId, cancellationToken);
+        await EnsureUniqueAsync(request.UserName, request.Email, request.Identification, userId, cancellationToken);
         await EnsureRoleExistsAsync(request.RoleId, cancellationToken);
 
-        user.UpdateProfile(request.UserName.Trim(), request.Email.Trim(), request.RoleId);
+        user.UpdateProfile(request.UserName.Trim(), request.Identification.Trim(), request.Email.Trim(), request.RoleId);
 
         if (!string.IsNullOrWhiteSpace(request.Password))
         {
@@ -136,10 +136,11 @@ public sealed class UserManagementService : IUserManagementService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task EnsureUniqueAsync(string userName, string email, int? currentUserId, CancellationToken cancellationToken)
+    private async Task EnsureUniqueAsync(string userName, string email, string identification, int? currentUserId, CancellationToken cancellationToken)
     {
         var normalizedUserName = userName.Trim();
         var normalizedEmail = email.Trim();
+        var normalizedIdentification = identification.Trim();
 
         var userNameExists = await _userManagementRepository.UserNameExistsAsync(normalizedUserName, currentUserId, cancellationToken);
 
@@ -153,6 +154,13 @@ public sealed class UserManagementService : IUserManagementService
         if (emailExists)
         {
             throw new ConflictException("El email ya existe.");
+        }
+
+        var identificationExists = await _userManagementRepository.IdentificationExistsAsync(normalizedIdentification, currentUserId, cancellationToken);
+
+        if (identificationExists)
+        {
+            throw new ConflictException("La identificación del usuario ya existe.");
         }
     }
 

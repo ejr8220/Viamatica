@@ -1,0 +1,75 @@
+<section class="feature-page">
+  <app-page-header title="Atenciones" subtitle="Inicia y cierra atenciones operativas." icon="pi pi-comments">
+    <button pButton type="button" label="Nueva atención" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+  </app-page-header>
+
+  <app-stats-section title="Resumen de atenciones">
+    <div class="stats-grid">
+      <app-stat-card title="Atenciones" [value]="attentions.length" icon="pi pi-comments"></app-stat-card>
+      <app-stat-card title="Abiertas" [value]="openCount" icon="pi pi-clock" color="warning"></app-stat-card>
+      <app-stat-card title="Cerradas" [value]="closedCount" icon="pi pi-check-circle" color="success"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <app-grid-shared [columns]="columns" [data]="filteredAttentions" [loading]="loading" [actions]="actions">
+    <span caption-start class="muted-text">Atenciones listadas: {{ filteredAttentions.length }}</span>
+    <div caption-end class="table-search">
+      <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar atención" />
+    </div>
+  </app-grid-shared>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '42rem' }" header="Nueva atención">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid two-columns">
+      <div class="form-field">
+        <label class="form-label">Turno</label>
+        <select formControlName="turnId">
+          <option [ngValue]="0">Seleccione un turno</option>
+          <option *ngFor="let turn of turnOptions" [ngValue]="turn.turnId">{{ turn.description }}</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Cliente</label>
+        <select formControlName="clientId" (change)="onClientChange()">
+          <option [ngValue]="0">Seleccione un cliente</option>
+          <option *ngFor="let client of clientOptions" [ngValue]="client.clientId">{{ client.displayName }}</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Contrato</label>
+        <select formControlName="contractId">
+          <option [ngValue]="0">Sin contrato</option>
+          <option *ngFor="let contract of contractOptions" [ngValue]="contract.contractId">{{ contract.description }}</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Tipo de atención</label>
+        <select formControlName="attentionTypeId">
+          <option value="">Seleccione un tipo</option>
+          <option *ngFor="let type of typeOptions" [value]="type.attentionTypeId">{{ type.description }}</option>
+        </select>
+      </div>
+      <div class="form-field full-width">
+        <label class="form-label">Notas</label>
+        <textarea formControlName="notes" rows="3"></textarea>
+      </div>
+      <div class="dialog-actions full-width">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Iniciar" icon="pi pi-play" [loading]="saving"></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog [(visible)]="closeDialogVisible" [modal]="true" [style]="{ width: '34rem' }" [header]="closeMode === 'complete' ? 'Completar atención' : 'Cancelar atención'">
+    <form [formGroup]="closeForm" (ngSubmit)="submitClose()" class="form-grid">
+      <p class="muted-text">{{ selectedAttention?.turnNumber }} - {{ selectedAttention?.clientName }}</p>
+      <div class="form-field">
+        <label class="form-label">Notas</label>
+        <textarea formControlName="notes" rows="4"></textarea>
+      </div>
+      <div class="dialog-actions">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="closeDialogVisible = false"></button>
+        <button pButton type="submit" [label]="closeMode === 'complete' ? 'Completar' : 'Cancelar atención'" [loading]="closeSaving"></button>
+      </div>
+    </form>
+  </p-dialog>
+</section>

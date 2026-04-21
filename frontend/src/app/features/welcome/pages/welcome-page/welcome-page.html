@@ -1,0 +1,27 @@
+<section class="feature-page">
+  <app-page-header title="Bienvenido" subtitle="Accesos rápidos según tu perfil." icon="pi pi-home"></app-page-header>
+
+  <app-stats-section title="Resumen de bienvenida">
+    <div class="stats-grid">
+      <app-stat-card title="Usuario" [value]="userName" icon="pi pi-user" color="primary"></app-stat-card>
+      <app-stat-card title="Rol actual" [value]="userRole" icon="pi pi-shield" color="success"></app-stat-card>
+      <app-stat-card title="Módulos disponibles" [value]="shortcuts.length" icon="pi pi-th-large" color="warning"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <div class="surface-card">
+    <h2>Continúa con tu operación</h2>
+    <p class="muted-text">Selecciona uno de los módulos habilitados para comenzar.</p>
+
+    <div class="shortcut-grid" *ngIf="!loading; else loadingState">
+      <a *ngFor="let shortcut of shortcuts" [routerLink]="shortcut.route" class="shortcut-card">
+        <i [class]="shortcut.icon"></i>
+        <span>{{ shortcut.title }}</span>
+      </a>
+    </div>
+  </div>
+
+  <ng-template #loadingState>
+    <div class="surface-card empty-state">Cargando accesos rápidos...</div>
+  </ng-template>
+</section>

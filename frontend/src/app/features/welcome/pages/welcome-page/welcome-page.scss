@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.shortcut-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  text-decoration: none;
+  color: var(--text-color);
+  border: 1px solid var(--surface-border);
+  background: #fff;
+}
+
+.shortcut-card i {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}

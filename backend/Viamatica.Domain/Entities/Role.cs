@@ -7,6 +7,7 @@ public class Role
 
     // Navigation
     public ICollection<User> Users { get; private set; } = new List<User>();
+    public ICollection<NavigationMenuRole> NavigationMenuRoles { get; private set; } = new List<NavigationMenuRole>();
 
     private Role() { } // EF Constructor
 

@@ -1,0 +1,89 @@
+<section class="feature-page">
+  <app-page-header title="Clientes" subtitle="Gestión operativa y carga masiva de clientes." icon="pi pi-id-card">
+    <div class="page-actions">
+      <label class="file-trigger p-button p-component p-button-outlined">
+        <i class="pi pi-upload"></i>
+        <span>Carga masiva</span>
+        <input type="file" accept=".xlsx,.xls,.csv" (change)="onFileSelected($event)" />
+      </label>
+      <button pButton type="button" label="Nuevo cliente" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+    </div>
+  </app-page-header>
+
+  <app-stats-section title="Resumen de clientes">
+    <div class="stats-grid">
+      <app-stat-card title="Clientes" [value]="clients.length" icon="pi pi-id-card"></app-stat-card>
+      <app-stat-card title="Con correo" [value]="clients.length" icon="pi pi-envelope" color="success"></app-stat-card>
+      <app-stat-card title="Filtrados" [value]="filteredClients.length" icon="pi pi-filter" color="warning"></app-stat-card>
+    </div>
+  </app-stats-section>
+
+  <app-grid-shared [columns]="columns" [data]="filteredClients" [loading]="loading" [actions]="actions">
+    <span caption-start class="muted-text">Clientes listados: {{ filteredClients.length }}</span>
+    <div caption-end class="table-search">
+      <input pInputText [(ngModel)]="searchTerm" placeholder="Buscar cliente" />
+    </div>
+  </app-grid-shared>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '46rem' }" [header]="editingClient ? 'Editar cliente' : 'Nuevo cliente'">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid two-columns">
+      <div class="form-field">
+        <label class="form-label">Identificación</label>
+        <input pInputText formControlName="identification" />
+        <span class="form-error" *ngIf="hasError('identification', 'required')">La identificación es obligatoria.</span>
+        <span class="form-error" *ngIf="hasError('identification', 'minlength')">La identificación debe tener al menos 10 dígitos.</span>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Nombres</label>
+        <input pInputText formControlName="firstName" />
+        <span class="form-error" *ngIf="hasError('firstName', 'required')">Los nombres son obligatorios.</span>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Apellidos</label>
+        <input pInputText formControlName="lastName" />
+        <span class="form-error" *ngIf="hasError('lastName', 'required')">Los apellidos son obligatorios.</span>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Correo</label>
+        <input pInputText type="email" formControlName="email" />
+        <span class="form-error" *ngIf="hasError('email', 'required')">El correo es obligatorio.</span>
+        <span class="form-error" *ngIf="hasError('email', 'email')">Ingrese un correo válido.</span>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Teléfono</label>
+        <input pInputText formControlName="phone" />
+        <span class="form-error" *ngIf="hasError('phone', 'required')">El teléfono es obligatorio.</span>
+        <span class="form-error" *ngIf="hasError('phone', 'minlength')">El teléfono debe tener al menos 10 dígitos.</span>
+      </div>
+      <div class="form-field full-width">
+        <label class="form-label">Dirección</label>
+        <textarea formControlName="address" rows="3"></textarea>
+        <span class="form-error" *ngIf="hasError('address', 'required')">La dirección es obligatoria.</span>
+        <span class="form-error" *ngIf="hasError('address', 'minlength')">La dirección debe tener al menos 20 caracteres.</span>
+      </div>
+      <div class="form-field full-width">
+        <label class="form-label">Referencia</label>
+        <textarea formControlName="referenceAddress" rows="3"></textarea>
+        <span class="form-error" *ngIf="hasError('referenceAddress', 'required')">La referencia es obligatoria.</span>
+        <span class="form-error" *ngIf="hasError('referenceAddress', 'minlength')">La referencia debe tener al menos 20 caracteres.</span>
+      </div>
+      <div class="dialog-actions full-width">
+        <button pButton type="button" label="Cancelar" severity="secondary" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Guardar" icon="pi pi-save" [loading]="saving"></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog [(visible)]="importDialogVisible" [modal]="true" [style]="{ width: '40rem' }" header="Carga masiva de clientes">
+    <div class="form-grid">
+      <p class="muted-text">Encabezados esperados: identification, firstName, lastName, email, phone, address.</p>
+      <p-progressBar [value]="bulkProgress"></p-progressBar>
+      <div class="upload-results">
+        <div *ngFor="let result of bulkResults" class="upload-item" [class.success]="result.status === 'success'" [class.error]="result.status === 'error'">
+          Fila {{ result.rowNumber }}: {{ result.message }}
+        </div>
+      </div>
+      <span class="muted-text" *ngIf="importing">Procesando archivo...</span>
+    </div>
+  </p-dialog>
+</section>

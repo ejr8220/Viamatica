@@ -7,7 +7,10 @@ public class User : SoftDeletableEntity
 {
     public int UserId { get; private set; }
     public string UserName { get; private set; } = string.Empty;
+    public string Identification { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
+    public string EmailHash { get; private set; } = string.Empty;
+    public string IdentificationHash { get; private set; } = string.Empty;
     public string Password { get; private set; } = string.Empty;
     public int RoleId { get; private set; }
     public string StatusId { get; private set; } = string.Empty;
@@ -24,14 +27,16 @@ public class User : SoftDeletableEntity
 
     private User() { } // EF Constructor
 
-    public User(string userName, string email, string password, int roleId, string statusId)
+    public User(string userName, string identification, string email, string password, int roleId, string statusId)
     {
         ValidateUserName(userName);
+        ValidateIdentification(identification);
         ValidatePassword(password);
         ValidateEmail(email);
         ValidateStatusId(statusId);
 
         UserName = userName;
+        Identification = identification;
         Email = email;
         Password = password;
         RoleId = roleId;
@@ -39,12 +44,14 @@ public class User : SoftDeletableEntity
         UserApproval = 0;
     }
 
-    public void UpdateProfile(string userName, string email, int roleId)
+    public void UpdateProfile(string userName, string identification, string email, int roleId)
     {
         ValidateUserName(userName);
+        ValidateIdentification(identification);
         ValidateEmail(email);
 
         UserName = userName;
+        Identification = identification;
         Email = email;
         RoleId = roleId;
     }
@@ -101,6 +108,18 @@ public class User : SoftDeletableEntity
             throw new ArgumentException("Invalid email format", nameof(email));
     }
 
+    private static void ValidateIdentification(string identification)
+    {
+        if (string.IsNullOrWhiteSpace(identification))
+            throw new ArgumentException("Identification is required", nameof(identification));
+
+        if (identification.Length < 10 || identification.Length > 13)
+            throw new ArgumentException("Identification must be between 10 and 13 characters", nameof(identification));
+
+        if (!Regex.IsMatch(identification, @"^\d+$"))
+            throw new ArgumentException("Identification must contain only numbers", nameof(identification));
+    }
+
     private static void ValidateStatusId(string statusId)
     {
         if (string.IsNullOrWhiteSpace(statusId))
@@ -132,5 +151,11 @@ public class User : SoftDeletableEntity
     public void Activate()
     {
         StatusId = "ACT";
+    }
+
+    public void SyncProtectedHashes(string emailHash, string identificationHash)
+    {
+        EmailHash = emailHash;
+        IdentificationHash = identificationHash;
     }
 }

@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.assigned-cashiers {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid var(--surface-border);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.assigned-cashier-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: #f8fbff;
+  border: 1px solid var(--surface-border);
+  border-radius: 0.9rem;
+}
+
+.assigned-cashier-name {
+  color: var(--text-color);
+  font-weight: 600;
+}

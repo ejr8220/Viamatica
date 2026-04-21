@@ -1,0 +1,73 @@
+<section class="auth-shell">
+  <div class="auth-layout">
+    <section class="auth-hero">
+      <div class="auth-hero-overlay"></div>
+      <div class="auth-hero-content">
+        <span class="brand-badge">VM</span>
+        <div class="hero-copy">
+          <p class="hero-kicker">Plataforma operativa</p>
+          <h1>Viamática</h1>
+          <p>
+            Gestiona usuarios, turnos, cajas, clientes y contratos desde una experiencia clara,
+            segura y preparada para operación diaria.
+          </p>
+        </div>
+
+        <div class="hero-points">
+          <div class="hero-point">
+            <i class="pi pi-shield"></i>
+            <span>Autenticación protegida con JWT y claims seguras.</span>
+          </div>
+          <div class="hero-point">
+            <i class="pi pi-sitemap"></i>
+            <span>Menú dinámico por rol cargado desde base de datos.</span>
+          </div>
+          <div class="hero-point">
+            <i class="pi pi-chart-line"></i>
+            <span>Operación centralizada para administrador, gestor y cajero.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <div>
+            <p class="auth-eyebrow">Bienvenido</p>
+            <h2>Iniciar sesión</h2>
+            <p class="auth-subtitle">Ingrese sus credenciales para acceder al panel operativo.</p>
+          </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+          <div class="form-field">
+            <label class="form-label" for="userNameOrEmail">Usuario o correo</label>
+            <input id="userNameOrEmail" pInputText class="auth-input" formControlName="userNameOrEmail" placeholder="usuario o correo registrado" />
+            <span class="form-error" *ngIf="form.controls.userNameOrEmail.invalid && form.controls.userNameOrEmail.touched">
+              El usuario o correo es obligatorio.
+            </span>
+          </div>
+
+          <div class="form-field">
+            <div class="form-label-row">
+              <label class="form-label" for="password">Contraseña</label>
+              <a class="auth-link" routerLink="/auth/forgot-password">¿Olvidó su contraseña?</a>
+            </div>
+            <input id="password" type="password" pInputText class="auth-input" formControlName="password" placeholder="Ingrese su contraseña" minlength="8" />
+            <span class="form-error" *ngIf="form.controls.password.invalid && form.controls.password.touched">
+              La contraseña debe tener al menos 8 caracteres.
+            </span>
+          </div>
+
+          <button type="submit" class="auth-submit" [disabled]="submitting">
+            <i class="pi" [class.pi-spin]="submitting" [class.pi-spinner]="submitting" [class.pi-sign-in]="!submitting"></i>
+            <span>{{ submitting ? 'Validando acceso...' : 'Ingresar al sistema' }}</span>
+          </button>
+        </form>
+
+        <p class="auth-footnote">© {{ currentYear }} Viamática. Acceso restringido a personal autorizado.</p>
+      </div>
+    </section>
+  </div>
+</section>

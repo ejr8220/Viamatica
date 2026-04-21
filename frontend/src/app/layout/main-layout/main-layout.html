@@ -1,0 +1,14 @@
+<div class="layout-wrapper" [class.sidebar-hidden]="!sidebarVisible">
+  <app-topbar (menuToggle)="toggleSidebar()"></app-topbar>
+  
+  <div class="layout-main-container">
+    <app-sidebar [visible]="sidebarVisible"></app-sidebar>
+    
+    <div class="layout-main">
+      <div class="layout-content">
+        <router-outlet></router-outlet>
+      </div>
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

@@ -27,6 +27,16 @@ public class Turn
         UserGestorId = userGestorId;
     }
 
+    public void Update(string description, DateTimeOffset date, int cashId, int userGestorId)
+    {
+        ValidateDescription(description);
+
+        Description = description;
+        Date = date;
+        CashId = cashId;
+        UserGestorId = userGestorId;
+    }
+
     private static void ValidateDescription(string description)
     {
         if (string.IsNullOrWhiteSpace(description))

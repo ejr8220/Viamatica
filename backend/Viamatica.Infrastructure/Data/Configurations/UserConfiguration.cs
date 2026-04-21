@@ -44,6 +44,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.DateApproval)
             .HasColumnName("dateapproval");
 
+        builder.Property(u => u.IsDeleted)
+            .HasColumnName("isdeleted")
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        builder.Property(u => u.DeletedAt)
+            .HasColumnName("deletedat");
+
         // Relationships
         builder.HasOne(u => u.Role)
             .WithMany(r => r.Users)
@@ -56,7 +64,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .OnDelete(DeleteBehavior.Restrict);
 
         // Index
-        builder.HasIndex(u => u.UserName).IsUnique();
-        builder.HasIndex(u => u.Email).IsUnique();
+        builder.HasIndex(u => u.UserName)
+            .IsUnique()
+            .HasFilter("[isdeleted] = 0");
+
+        builder.HasIndex(u => u.Email)
+            .IsUnique()
+            .HasFilter("[isdeleted] = 0");
     }
 }

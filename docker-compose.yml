@@ -1,0 +1,33 @@
+services:
+  viamatica-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: viamatica-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+      SA_PASSWORD: "Viamatica2026!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - viamatica-sqldata:/var/opt/mssql
+
+  viamatica-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: viamatica-api
+    depends_on:
+      - viamatica-sqlserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=viamatica-sqlserver,1433;Database=ViamaticaDB;User Id=sa;Password=Viamatica2026!;TrustServerCertificate=True;MultipleActiveResultSets=True"
+      JwtSettings__SecretKey: "viamatica-api-secret-key-2026-minimum-32"
+      JwtSettings__Issuer: "Viamatica.API"
+      JwtSettings__Audience: "Viamatica.Client"
+      JwtSettings__ExpirationMinutes: "60"
+      JwtSettings__ClaimsEncryptionKey: "viamatica-claims-encryption-key-2026"
+    ports:
+      - "8080:8080"
+
+volumes:
+  viamatica-sqldata:

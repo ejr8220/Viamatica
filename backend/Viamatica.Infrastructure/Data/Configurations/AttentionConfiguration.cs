@@ -21,6 +21,12 @@ public class AttentionConfiguration : IEntityTypeConfiguration<Attention>
         builder.Property(a => a.ClientId)
             .HasColumnName("client_clientid");
 
+        builder.Property(a => a.ContractId)
+            .HasColumnName("contract_contractid");
+
+        builder.Property(a => a.CashierUserId)
+            .HasColumnName("cashier_userid");
+
         builder.Property(a => a.AttentionTypeId)
             .HasColumnName("attentiontype_attentiontypeid")
             .HasMaxLength(3)
@@ -28,6 +34,16 @@ public class AttentionConfiguration : IEntityTypeConfiguration<Attention>
 
         builder.Property(a => a.StatusId)
             .HasColumnName("attentionstatus_statusid");
+
+        builder.Property(a => a.Notes)
+            .HasColumnName("notes")
+            .HasMaxLength(300);
+
+        builder.Property(a => a.CreatedAt)
+            .HasColumnName("createdat");
+
+        builder.Property(a => a.CompletedAt)
+            .HasColumnName("completedat");
 
         // Relationships
         builder.HasOne(a => a.Turn)
@@ -38,6 +54,16 @@ public class AttentionConfiguration : IEntityTypeConfiguration<Attention>
         builder.HasOne(a => a.Client)
             .WithMany(c => c.Attentions)
             .HasForeignKey(a => a.ClientId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(a => a.Contract)
+            .WithMany(c => c.Attentions)
+            .HasForeignKey(a => a.ContractId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(a => a.CashierUser)
+            .WithMany(u => u.CashierAttentions)
+            .HasForeignKey(a => a.CashierUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(a => a.AttentionType)

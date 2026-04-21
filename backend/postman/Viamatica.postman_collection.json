@@ -1,0 +1,403 @@
+{
+  "info": {
+    "_postman_id": "308651f1-67e3-461f-a4f4-c1d941ad4e83",
+    "name": "Viamatica API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección para probar login, usuarios, clientes, cajas, turnos, servicios, contratos, pagos y atenciones."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "adminUserNameOrEmail", "value": "admin2026" },
+    { "key": "adminPassword", "value": "Admin2026" },
+    { "key": "gestorUserNameOrEmail", "value": "gestor01" },
+    { "key": "gestorPassword", "value": "Gestor2026" },
+    { "key": "cashierUserNameOrEmail", "value": "cajero01" },
+    { "key": "cashierPassword", "value": "Cajero2026" },
+    { "key": "createdUserId", "value": "" },
+    { "key": "createdClientId", "value": "" },
+    { "key": "cashId", "value": "1" },
+    { "key": "turnId", "value": "" },
+    { "key": "serviceId", "value": "" },
+    { "key": "contractId", "value": "" },
+    { "key": "attentionId", "value": "" },
+    { "key": "cashierUserId", "value": "3" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('token', json.accessToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userNameOrEmail\": \"{{adminUserNameOrEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Gestor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('token', json.accessToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userNameOrEmail\": \"{{gestorUserNameOrEmail}}\",\n  \"password\": \"{{gestorPassword}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Cajero",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('token', json.accessToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userNameOrEmail\": \"{{cashierUserNameOrEmail}}\",\n  \"password\": \"{{cashierPassword}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/users" }
+        },
+        {
+          "name": "Create Pending User As Gestor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('createdUserId', json.userId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"nuevo123\",\n  \"email\": \"nuevo123@viamatica.local\",\n  \"password\": \"NuevaClave1\",\n  \"roleId\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "List Pending Users",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/users?pendingOnly=true" }
+        },
+        {
+          "name": "Approve User As Admin",
+          "request": { "method": "POST", "url": "{{baseUrl}}/api/users/{{createdUserId}}/approve" }
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Create Client",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('createdClientId', json.clientId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/clients",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan\",\n  \"lastName\": \"Pérez\",\n  \"identification\": \"0102030406\",\n  \"email\": \"juan.perez@viamatica.local\",\n  \"phoneNumber\": \"0997654321\",\n  \"address\": \"Avenida Siempre Viva 742 y calle complementaria\",\n  \"referenceAddress\": \"Junto al centro comercial principal del sector\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Clients",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/clients" }
+        },
+        {
+          "name": "Search Client By Identification",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/clients?identification=0102030406" }
+        }
+      ]
+    },
+    {
+      "name": "Cashes",
+      "item": [
+        {
+          "name": "List Cashes",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/cashes" }
+        },
+        {
+          "name": "Create Cash",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('cashId', json.cashId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/cashes",
+            "body": { "mode": "raw", "raw": "{\n  \"cashDescription\": \"Caja sucursal norte\"\n}" }
+          }
+        },
+        {
+          "name": "Assign Cashier To Cash",
+          "request": { "method": "POST", "url": "{{baseUrl}}/api/cashes/{{cashId}}/assignments/{{cashierUserId}}" }
+        },
+        {
+          "name": "Open Cash Session As Cashier",
+          "request": { "method": "POST", "url": "{{baseUrl}}/api/cashes/{{cashId}}/sessions/open" }
+        },
+        {
+          "name": "Close Cash Session As Cashier",
+          "request": { "method": "POST", "url": "{{baseUrl}}/api/cashes/{{cashId}}/sessions/close" }
+        }
+      ]
+    },
+    {
+      "name": "Turns",
+      "item": [
+        {
+          "name": "Create Turn",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('turnId', json.turnId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/turns",
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"AT1001\",\n  \"date\": \"2026-01-01T10:00:00Z\",\n  \"cashId\": {{cashId}}\n}" }
+          }
+        },
+        {
+          "name": "List Turns",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/turns" }
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "Create Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('serviceId', json.serviceId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/services",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceName\": \"Internet Premium\",\n  \"serviceDescription\": \"Plan premium para pruebas funcionales del backend\",\n  \"price\": 49.99\n}"
+            }
+          }
+        },
+        {
+          "name": "List Services",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/services" }
+        }
+      ]
+    },
+    {
+      "name": "Contracts",
+      "item": [
+        {
+          "name": "List Payment Methods",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/contracts/payment-methods" }
+        },
+        {
+          "name": "Create Contract",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('contractId', json.contractId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/contracts",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2026-01-01T00:00:00Z\",\n  \"endDate\": \"2026-12-31T23:59:59Z\",\n  \"serviceId\": {{serviceId}},\n  \"clientId\": {{createdClientId}},\n  \"methodPaymentId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Register Payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/contracts/{{contractId}}/payments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 49.99,\n  \"description\": \"Pago inicial del contrato\",\n  \"paymentDate\": \"2026-01-02T09:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Change Payment Method",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/contracts/{{contractId}}/change-payment-method",
+            "body": { "mode": "raw", "raw": "{\n  \"methodPaymentId\": 2\n}" }
+          }
+        },
+        {
+          "name": "Change Service",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/contracts/{{contractId}}/change-service",
+            "body": { "mode": "raw", "raw": "{\n  \"newServiceId\": {{serviceId}}\n}" }
+          }
+        },
+        {
+          "name": "Cancel Contract",
+          "request": { "method": "POST", "url": "{{baseUrl}}/api/contracts/{{contractId}}/cancel" }
+        }
+      ]
+    },
+    {
+      "name": "Attentions",
+      "item": [
+        {
+          "name": "List Attention Types",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/attentions/types" }
+        },
+        {
+          "name": "Start Attention",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('attentionId', json.attentionId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/attentions/start",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnId\": {{turnId}},\n  \"clientId\": {{createdClientId}},\n  \"contractId\": {{contractId}},\n  \"attentionTypeId\": \"PAY\",\n  \"notes\": \"Inicio de atención en caja\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Complete Attention",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/attentions/{{attentionId}}/complete",
+            "body": { "mode": "raw", "raw": "{\n  \"notes\": \"Pago completado en ventanilla\"\n}" }
+          }
+        }
+      ]
+    }
+  ]
+}

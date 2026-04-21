@@ -9,10 +9,11 @@ public class Cash
     // Navigation
     public ICollection<UserCash> UserCashes { get; private set; } = new List<UserCash>();
     public ICollection<Turn> Turns { get; private set; } = new List<Turn>();
+    public ICollection<CashSession> Sessions { get; private set; } = new List<CashSession>();
 
     private Cash() { } // EF Constructor
 
-    public Cash(int cashId, string cashDescription, string active = "Y")
+    public Cash(string cashDescription, string active = "Y")
     {
         if (string.IsNullOrWhiteSpace(cashDescription))
             throw new ArgumentException("Cash description is required", nameof(cashDescription));
@@ -20,9 +21,20 @@ public class Cash
         if (string.IsNullOrWhiteSpace(active) || active.Length != 1)
             throw new ArgumentException("Active must contain a single character", nameof(active));
 
-        CashId = cashId;
         CashDescription = cashDescription;
-        Active = active;
+        Active = active.ToUpperInvariant();
+    }
+
+    public void Update(string cashDescription, string active)
+    {
+        if (string.IsNullOrWhiteSpace(cashDescription))
+            throw new ArgumentException("Cash description is required", nameof(cashDescription));
+
+        if (string.IsNullOrWhiteSpace(active) || active.Length != 1)
+            throw new ArgumentException("Active must contain a single character", nameof(active));
+
+        CashDescription = cashDescription;
+        Active = active.ToUpperInvariant();
     }
 
     public void Activate() => Active = "Y";

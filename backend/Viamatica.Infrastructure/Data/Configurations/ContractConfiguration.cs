@@ -35,6 +35,14 @@ public class ContractConfiguration : IEntityTypeConfiguration<Contract>
         builder.Property(c => c.MethodPaymentId)
             .HasColumnName("methodpayment_methodpaymentid");
 
+        builder.Property(c => c.IsDeleted)
+            .HasColumnName("isdeleted")
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        builder.Property(c => c.DeletedAt)
+            .HasColumnName("deletedat");
+
         // Relationships
         builder.HasOne(c => c.Service)
             .WithMany(s => s.Contracts)

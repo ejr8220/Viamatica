@@ -1,0 +1,12 @@
+C:\Repositories\Viamatica\backend\Viamatica.Domain\bin\Debug\net9.0\Viamatica.Domain.deps.json
+C:\Repositories\Viamatica\backend\Viamatica.Domain\bin\Debug\net9.0\Viamatica.Domain.dll
+C:\Repositories\Viamatica\backend\Viamatica.Domain\bin\Debug\net9.0\Viamatica.Domain.pdb
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\Viamatica.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\Viamatica.Domain.AssemblyInfoInputs.cache
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\Viamatica.Domain.AssemblyInfo.cs
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\Viamatica.Domain.csproj.CoreCompileInputs.cache
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\Viamatica.Domain.sourcelink.json
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\Viamatica.Domain.dll
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\refint\Viamatica.Domain.dll
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\Viamatica.Domain.pdb
+C:\Repositories\Viamatica\backend\Viamatica.Domain\obj\Debug\net9.0\ref\Viamatica.Domain.dll

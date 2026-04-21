@@ -50,8 +50,21 @@ public class ClientConfiguration : IEntityTypeConfiguration<Client>
             .HasMaxLength(100)
             .IsRequired();
 
+        builder.Property(c => c.IsDeleted)
+            .HasColumnName("isdeleted")
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        builder.Property(c => c.DeletedAt)
+            .HasColumnName("deletedat");
+
         // Index
-        builder.HasIndex(c => c.Identification).IsUnique();
-        builder.HasIndex(c => c.Email).IsUnique();
+        builder.HasIndex(c => c.Identification)
+            .IsUnique()
+            .HasFilter("[isdeleted] = 0");
+
+        builder.HasIndex(c => c.Email)
+            .IsUnique()
+            .HasFilter("[isdeleted] = 0");
     }
 }

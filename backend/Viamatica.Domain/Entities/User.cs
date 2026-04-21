@@ -1,8 +1,9 @@
 using System.Text.RegularExpressions;
+using Viamatica.Domain.Common;
 
 namespace Viamatica.Domain.Entities;
 
-public class User
+public class User : SoftDeletableEntity
 {
     public int UserId { get; private set; }
     public string UserName { get; private set; } = string.Empty;
@@ -18,6 +19,8 @@ public class User
     public UserStatus Status { get; private set; } = null!;
     public ICollection<UserCash> UserCashes { get; private set; } = new List<UserCash>();
     public ICollection<Turn> Turns { get; private set; } = new List<Turn>();
+    public ICollection<CashSession> CashSessions { get; private set; } = new List<CashSession>();
+    public ICollection<Attention> CashierAttentions { get; private set; } = new List<Attention>();
 
     private User() { } // EF Constructor
 
@@ -34,6 +37,22 @@ public class User
         RoleId = roleId;
         StatusId = statusId;
         UserApproval = 0;
+    }
+
+    public void UpdateProfile(string userName, string email, int roleId)
+    {
+        ValidateUserName(userName);
+        ValidateEmail(email);
+
+        UserName = userName;
+        Email = email;
+        RoleId = roleId;
+    }
+
+    public void ChangePassword(string password)
+    {
+        ValidatePassword(password);
+        Password = password;
     }
 
     private static void ValidateUserName(string userName)
@@ -56,6 +75,9 @@ public class User
     {
         if (string.IsNullOrWhiteSpace(password))
             throw new ArgumentException("Password is required", nameof(password));
+
+        if (password.StartsWith("$2", StringComparison.Ordinal))
+            return;
 
         if (password.Length < 8 || password.Length > 30)
             throw new ArgumentException("Password must be between 8 and 30 characters", nameof(password));
@@ -91,6 +113,24 @@ public class User
     public void Approve()
     {
         UserApproval = 1;
+        StatusId = "ACT";
         DateApproval = DateTimeOffset.UtcNow;
+    }
+
+    public void MarkPendingApproval()
+    {
+        UserApproval = 0;
+        StatusId = "PEN";
+        DateApproval = null;
+    }
+
+    public void Deactivate()
+    {
+        StatusId = "INA";
+    }
+
+    public void Activate()
+    {
+        StatusId = "ACT";
     }
 }

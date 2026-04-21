@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "x1e6IuWXPac=",
+  "success": true,
+  "projectFilePath": "C:\\Repositories\\Viamatica\\backend\\Viamatica.Application\\Viamatica.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ejr82\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.0\\microsoft.extensions.dependencyinjection.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\ejr82\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.15\\microsoft.netcore.app.ref.9.0.15.nupkg.sha512",
+    "C:\\Users\\ejr82\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.15\\microsoft.windowsdesktop.app.ref.9.0.15.nupkg.sha512",
+    "C:\\Users\\ejr82\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.15\\microsoft.aspnetcore.app.ref.9.0.15.nupkg.sha512"
+  ],
+  "logs": []
+}

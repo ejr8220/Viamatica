@@ -1,0 +1,16 @@
+C:\Repositories\Viamatica\backend\Viamatica.Application\bin\Debug\net9.0\Viamatica.Application.deps.json
+C:\Repositories\Viamatica\backend\Viamatica.Application\bin\Debug\net9.0\Viamatica.Application.dll
+C:\Repositories\Viamatica\backend\Viamatica.Application\bin\Debug\net9.0\Viamatica.Application.pdb
+C:\Repositories\Viamatica\backend\Viamatica.Application\bin\Debug\net9.0\Viamatica.Domain.dll
+C:\Repositories\Viamatica\backend\Viamatica.Application\bin\Debug\net9.0\Viamatica.Domain.pdb
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.csproj.AssemblyReference.cache
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.AssemblyInfoInputs.cache
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.AssemblyInfo.cs
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.csproj.CoreCompileInputs.cache
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.sourcelink.json
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatic.6F849AEA.Up2Date
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.dll
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\refint\Viamatica.Application.dll
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\Viamatica.Application.pdb
+C:\Repositories\Viamatica\backend\Viamatica.Application\obj\Debug\net9.0\ref\Viamatica.Application.dll

@@ -28,4 +28,20 @@ public class Service
         ServiceDescription = serviceDescription;
         Price = price;
     }
+
+    public void Update(string serviceName, string serviceDescription, decimal price)
+    {
+        if (string.IsNullOrWhiteSpace(serviceName))
+            throw new ArgumentException("Service name is required", nameof(serviceName));
+
+        if (string.IsNullOrWhiteSpace(serviceDescription))
+            throw new ArgumentException("Service description is required", nameof(serviceDescription));
+
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative", nameof(price));
+
+        ServiceName = serviceName;
+        ServiceDescription = serviceDescription;
+        Price = price;
+    }
 }

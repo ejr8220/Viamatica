@@ -1,8 +1,9 @@
 using System.Text.RegularExpressions;
+using Viamatica.Domain.Common;
 
 namespace Viamatica.Domain.Entities;
 
-public class Client
+public class Client : SoftDeletableEntity
 {
     public int ClientId { get; private set; }
     public string Name { get; private set; } = string.Empty;
@@ -22,6 +23,26 @@ public class Client
 
     public Client(string name, string lastName, string identification, string email, 
                   string phoneNumber, string address, string referenceAddress)
+    {
+        ValidateName(name);
+        ValidateLastName(lastName);
+        ValidateIdentification(identification);
+        ValidateEmail(email);
+        ValidatePhoneNumber(phoneNumber);
+        ValidateAddress(address);
+        ValidateReferenceAddress(referenceAddress);
+
+        Name = name;
+        LastName = lastName;
+        Identification = identification;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        Address = address;
+        ReferenceAddress = referenceAddress;
+    }
+
+    public void Update(string name, string lastName, string identification, string email,
+        string phoneNumber, string address, string referenceAddress)
     {
         ValidateName(name);
         ValidateLastName(lastName);

@@ -1,11 +1,26 @@
-# Backend
+# Backend Viamatica
 
-Esqueleto inicial del backend en .NET 9 para la prueba Viamatica.
+Solución .NET 9 con tres proyectos:
 
-## Estructura
+- `Viamatica.API`: punto de entrada.
+- `Viamatica.Domain`: entidades y reglas de dominio.
+- `Viamatica.Infrastructure`: Entity Framework Core, DbContext, configuraciones y migraciones.
 
-- `Viamatica.API`: proyecto Web API base
-- `Viamatica.Domain`: capa de dominio inicial
-- `Viamatica.Infrastructure`: capa de infraestructura inicial
+## Base de datos
 
-En esta fase solo se deja la estructura del proyecto. No incluye entidades, migraciones ni logica de negocio.
+La conexión se configura con `DefaultConnection` en `Viamatica.API/appsettings.json`.
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=TU_SERVIDOR;Database=ViamaticaDb;User Id=TU_USUARIO;Password=TU_PASSWORD;TrustServerCertificate=True"
+  }
+}
+```
+
+## Migraciones
+
+```bash
+cd backend\Viamatica.Infrastructure
+dotnet ef database update --startup-project ..\Viamatica.API
+```

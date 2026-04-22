@@ -1,11 +1,15 @@
 using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Viamatica.Infrastructure.Data;
 
 #nullable disable
 
 namespace Viamatica.Infrastructure.Migrations
 {
     /// <inheritdoc />
+    [DbContext(typeof(ViamaticaDbContext))]
+    [Migration("20250101000000_InitialCreate")]
     public partial class InitialCreate : Migration
     {
         /// <inheritdoc />

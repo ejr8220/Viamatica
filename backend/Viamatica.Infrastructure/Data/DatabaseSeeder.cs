@@ -75,17 +75,40 @@ public sealed class DatabaseSeeder
 
     private async Task SeedContractStatusesAsync(CancellationToken cancellationToken)
     {
-        if (await _dbContext.StatusContracts.AnyAsync(cancellationToken))
+        var existingStatusIds = await _dbContext.StatusContracts
+            .AsNoTracking()
+            .Select(status => status.StatusId)
+            .ToListAsync(cancellationToken);
+
+        var statusIds = new HashSet<string>(existingStatusIds, StringComparer.OrdinalIgnoreCase);
+        var statusesToInsert = new List<StatusContract>();
+
+        if (!statusIds.Contains(ContractStatusIds.Active))
+        {
+            statusesToInsert.Add(new StatusContract(ContractStatusIds.Active, "Vigente"));
+        }
+
+        if (!statusIds.Contains(ContractStatusIds.Cancelled))
+        {
+            statusesToInsert.Add(new StatusContract(ContractStatusIds.Cancelled, "Cancelado"));
+        }
+
+        if (!statusIds.Contains(ContractStatusIds.Replaced))
+        {
+            statusesToInsert.Add(new StatusContract(ContractStatusIds.Replaced, "Sustituido"));
+        }
+
+        if (!statusIds.Contains(ContractStatusIds.Renewed))
+        {
+            statusesToInsert.Add(new StatusContract(ContractStatusIds.Renewed, "Renovación de servicio"));
+        }
+
+        if (statusesToInsert.Count == 0)
         {
             return;
         }
 
-        _dbContext.StatusContracts.AddRange(
-            new StatusContract(ContractStatusIds.Active, "Vigente"),
-            new StatusContract(ContractStatusIds.Cancelled, "Cancelado"),
-            new StatusContract(ContractStatusIds.Replaced, "Sustituido"),
-            new StatusContract(ContractStatusIds.Renewed, "Renovación de servicio"));
-
+        _dbContext.StatusContracts.AddRange(statusesToInsert);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 

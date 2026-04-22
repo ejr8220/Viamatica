@@ -30,6 +30,7 @@ public sealed class ContractService : IContractService
 
     public async Task<ContractResponseDto> CreateAsync(CreateContractRequestDto request, CancellationToken cancellationToken = default)
     {
+        await EnsureContractStatusExistsAsync(ContractStatusIds.Active, cancellationToken);
         await EnsureRelationsAsync(request.ClientId, request.ServiceId, request.MethodPaymentId, cancellationToken);
 
         var contract = new Contract(
@@ -75,6 +76,8 @@ public sealed class ContractService : IContractService
 
     public async Task<ContractResponseDto> ChangeServiceAsync(int contractId, ChangeContractServiceRequestDto request, CancellationToken cancellationToken = default)
     {
+        await EnsureContractStatusExistsAsync(ContractStatusIds.Renewed, cancellationToken);
+
         var currentContract = await _contractRepository.GetForUpdateAsync(contractId, cancellationToken)
             ?? throw new NotFoundException($"No se encontró el contrato {contractId}.");
 
@@ -156,6 +159,14 @@ public sealed class ContractService : IContractService
         if (!await _contractRepository.MethodPaymentExistsAsync(methodPaymentId, cancellationToken))
         {
             throw new NotFoundException($"No se encontró el método de pago {methodPaymentId}.");
+        }
+    }
+
+    private async Task EnsureContractStatusExistsAsync(string statusId, CancellationToken cancellationToken)
+    {
+        if (!await _contractRepository.ContractStatusExistsAsync(statusId, cancellationToken))
+        {
+            throw new BusinessRuleException($"No existe el estado de contrato requerido ({statusId}). Ejecuta el seeding de estados base.");
         }
     }
 }

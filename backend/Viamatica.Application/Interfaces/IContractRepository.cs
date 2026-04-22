@@ -12,6 +12,7 @@ public interface IContractRepository
     Task<bool> ClientExistsAsync(int clientId, CancellationToken cancellationToken = default);
     Task<bool> ServiceExistsAsync(int serviceId, CancellationToken cancellationToken = default);
     Task<bool> MethodPaymentExistsAsync(int methodPaymentId, CancellationToken cancellationToken = default);
+    Task<bool> ContractStatusExistsAsync(string statusId, CancellationToken cancellationToken = default);
     Task<PaymentResponseDto?> GetPaymentByIdAsync(int paymentId, CancellationToken cancellationToken = default);
     void AddContract(Contract contract);
     void AddPayment(Payment payment);

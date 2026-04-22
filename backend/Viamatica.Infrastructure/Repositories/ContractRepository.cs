@@ -73,6 +73,9 @@ public sealed class ContractRepository : IContractRepository
     public Task<bool> MethodPaymentExistsAsync(int methodPaymentId, CancellationToken cancellationToken = default)
         => _dbContext.MethodPayments.AnyAsync(method => method.MethodPaymentId == methodPaymentId, cancellationToken);
 
+    public Task<bool> ContractStatusExistsAsync(string statusId, CancellationToken cancellationToken = default)
+        => _dbContext.StatusContracts.AnyAsync(status => status.StatusId == statusId, cancellationToken);
+
     public Task<PaymentResponseDto?> GetPaymentByIdAsync(int paymentId, CancellationToken cancellationToken = default)
         => _dbContext.Payments
             .AsNoTracking()

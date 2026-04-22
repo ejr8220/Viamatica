@@ -8,24 +8,28 @@ namespace Viamatica.Infrastructure.Migrations
     /// <inheritdoc />
     public partial class AddSoftDeleteSupport : Migration
     {
+        private static void DropIndexIfExists(MigrationBuilder migrationBuilder, string tableName, string indexName)
+        {
+            migrationBuilder.Sql($"""
+                IF EXISTS (
+                    SELECT 1
+                    FROM sys.indexes
+                    WHERE name = N'{indexName}'
+                      AND object_id = OBJECT_ID(N'[dbo].[{tableName}]')
+                )
+                BEGIN
+                    DROP INDEX [{indexName}] ON [dbo].[{tableName}];
+                END
+                """);
+        }
+
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_usertable_email",
-                table: "usertable");
-
-            migrationBuilder.DropIndex(
-                name: "IX_usertable_username",
-                table: "usertable");
-
-            migrationBuilder.DropIndex(
-                name: "IX_client_email",
-                table: "client");
-
-            migrationBuilder.DropIndex(
-                name: "IX_client_identification",
-                table: "client");
+            DropIndexIfExists(migrationBuilder, "usertable", "IX_usertable_email");
+            DropIndexIfExists(migrationBuilder, "usertable", "IX_usertable_username");
+            DropIndexIfExists(migrationBuilder, "client", "IX_client_email");
+            DropIndexIfExists(migrationBuilder, "client", "IX_client_identification");
 
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "deletedat",
@@ -98,21 +102,10 @@ namespace Viamatica.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_usertable_email",
-                table: "usertable");
-
-            migrationBuilder.DropIndex(
-                name: "IX_usertable_username",
-                table: "usertable");
-
-            migrationBuilder.DropIndex(
-                name: "IX_client_email",
-                table: "client");
-
-            migrationBuilder.DropIndex(
-                name: "IX_client_identification",
-                table: "client");
+            DropIndexIfExists(migrationBuilder, "usertable", "IX_usertable_email");
+            DropIndexIfExists(migrationBuilder, "usertable", "IX_usertable_username");
+            DropIndexIfExists(migrationBuilder, "client", "IX_client_email");
+            DropIndexIfExists(migrationBuilder, "client", "IX_client_identification");
 
             migrationBuilder.DropColumn(
                 name: "deletedat",
